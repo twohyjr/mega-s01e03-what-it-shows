@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>#4471 · two causes, not one · support kb</title>
+  <style>
+    :root {
+      --bg: #fbfaf7; --fg: #1d1d1b; --muted: #6b6a66; --line: #e3e0d8;
+      --accent: #2f6f5e; --warn: #b4501f; --warn-bg: #fbeee6; --note-bg: #eef5f2;
+      --mono: ui-monospace, 'Cascadia Code', Menlo, monospace;
+    }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, sans-serif; }
+    .kb { max-width: 760px; margin: 0 auto; padding: 2rem 16px 4rem; }
+    .crumb { font: 0.8rem var(--mono); text-decoration: none; color: var(--muted); }
+    h1 { margin: 0.25rem 0 0.5rem; line-height: 1.2; }
+    .meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; color: var(--muted); font-size: 0.85rem; margin: 0; }
+    .status { border: 1px solid var(--line); border-radius: 99px; padding: 0 0.6rem; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.92rem; }
+    th, td { border-bottom: 1px solid var(--line); padding: 0.35rem 0.5rem; text-align: left; }
+    code { font-family: var(--mono); font-size: 0.88em; }
+    .sum { font-size: 1.1rem; }
+    .tags { color: var(--muted); font-size: 0.85em; }
+    .note { color: var(--muted); font-size: 0.85em; }
+    .wrong td { background: var(--warn-bg); }
+    .wrong td:last-child { color: var(--warn); font-weight: 600; }
+    aside.warn { border-left: 4px solid var(--warn); padding: 0.5rem 1rem; margin: 1rem 0; background: var(--warn-bg); }
+    .stamp { margin: 2rem 0 0; font: 0.85rem var(--mono); color: var(--muted); }
+    .stamp b { color: var(--accent); letter-spacing: 0.04em; }
+    footer { margin-top: 3rem; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="kb">
+    <header>
+      <a class="crumb" href="/kb">support desk · kb</a>
+      <h1>#4471 · two causes, not one</h1>
+      <p class="meta">
+        <span>owner <b>Rick Twohy</b></span>
+        <span class="status draft">draft</span>
+        <span>reviewed 2026-10-28 · 0 days ago</span>
+      </p>
+    </header>
+    <main>
+      <p>Ticket <strong>#4471</strong> was marked known as one parser bug: the shared parser reads dates month first, and day-first tenants get a flipped day. The export of the 412 merged reports does not support that.</p>
+      <p><code>causeOf</code> in <code>#lib/kb/causes</code> places each report from the <strong>tenant</strong> (locale + booking form) and the <strong>channel</strong>, not from <code>meta.intakeTag</code>. Against that rule, #4471 holds <strong>two</strong> causes.</p>
+
+      <h2>What the merge actually holds</h2>
+      <p class="sum"><strong>412</strong> reports merged into #4471 · <strong>2</strong> causes</p>
+      <table>
+        <thead>
+          <tr><th>cause</th><th>reports</th><th>tagged as</th><th>tenants</th><th>seen</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>parser</code></td>
+            <td>379</td>
+            <td class="tags">parser ×356 · hint ×23</td>
+            <td>11</td>
+            <td>2026-04-01 → 2026-10-04</td>
+            <td>#4471</td>
+          </tr>
+          <tr class="wrong">
+            <td><code>hint</code></td>
+            <td>33</td>
+            <td class="tags">hint ×18 · parser ×15</td>
+            <td>3</td>
+            <td>2026-04-17 → 2026-09-22</td>
+            <td>not this ticket — no ticket of its own</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">5 reports read as a one-day move; filed under <code>parser</code> by tenant.</p>
+
+      <h2>The two problems</h2>
+      <ol>
+        <li><strong>parser</strong> (379 reports) — day-first tenants on app, email, or booking-v2 form: the shared parser still reads month first, so the day and month swap.</li>
+        <li><strong>hint</strong> (33 reports) — day-first tenants on <strong>booking-v3</strong> through the <strong>form</strong> channel only (<code>alder.physio</code>, <code>copper.studio</code>, <code>pale.harbour</code>): the form prints <code>MM/DD/YYYY</code> under the field, people type month first, and the form reads the tenant's day-first order. That is a different bug from the shared parser.</li>
+      </ol>
+      <p>Intake tagged many of these the other way (<code>parser</code> vs <code>hint</code>). The cause follows the tenant, so those tags are guesses — not the ticket.</p>
+
+      <aside class="warn">
+        #4471 is not one known issue. Split it: one ticket per cause above, with the report counts from the table. Do not merge on subject alone when the causes differ.
+      </aside>
+
+      <h2>Why the old page was wrong</h2>
+      <p>The incident page said "one issue, one fix queued" and status <strong>known</strong>. The table on that same page already computed two causes; the prose did not match what the data showed. A number the code can compute belongs in a component — and then the words have to agree with it.</p>
+      <p>Five reports in <code>desk-notes.json</code> (<code>oneDayMove</code>) were read as a one-day shift. By tenant they still land under <strong>parser</strong>; they are a footnote, not a third cause.</p>
+
+      <p class="stamp">desk ref <b>DR-G3EY-KZTV</b></p>
+    </main>
+    <footer>Pages are written by people. Tables and charts are built from data at render time.</footer>
+  </div>
+</body>
+</html>

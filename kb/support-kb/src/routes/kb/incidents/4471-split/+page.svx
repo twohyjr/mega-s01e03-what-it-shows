@@ -1,0 +1,55 @@
+---
+layout: runbook
+title: '#4471 · two causes, not one'
+owner: Rick Twohy
+status: draft
+reviewed: 2026-10-28
+signature: Rick Twohy
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+Ticket **#4471** was marked known as one parser bug: the shared parser reads dates
+month first, and day-first tenants get a flipped day. The export of the 412 merged
+reports does not support that.
+
+`causeOf` in `#lib/kb/causes` places each report from the **tenant** (locale + booking
+form) and the **channel**, not from `meta.intakeTag`. Against that rule, #4471 holds
+**two** causes.
+
+## What the merge actually holds
+
+<CauseTable ticket={4471} />
+
+## The two problems
+
+1. **parser** (379 reports) — day-first tenants on app, email, or booking-v2 form:
+   the shared parser still reads month first, so the day and month swap.
+2. **hint** (33 reports) — day-first tenants on **booking-v3** through the **form**
+   channel only (`alder.physio`, `copper.studio`, `pale.harbour`): the form prints
+   `MM/DD/YYYY` under the field, people type month first, and the form reads the
+   tenant's day-first order. That is a different bug from the shared parser.
+
+Intake tagged many of these the other way (`parser` vs `hint`). The cause follows
+the tenant, so those tags are guesses — not the ticket.
+
+<Callout kind="warn">
+#4471 is not one known issue. Split it: one ticket per cause above, with the report
+counts from the table. Do not merge on subject alone when the causes differ.
+</Callout>
+
+## Why the old page was wrong
+
+The incident page said "one issue, one fix queued" and status **known**. The table on
+that same page already computed two causes; the prose did not match what the data
+showed. A number the code can compute belongs in a component — and then the words
+have to agree with it.
+
+Five reports in `desk-notes.json` (`oneDayMove`) were read as a one-day shift. By
+tenant they still land under **parser**; they are a footnote, not a third cause.
+
+<RenderStamp signature="Rick Twohy" />
