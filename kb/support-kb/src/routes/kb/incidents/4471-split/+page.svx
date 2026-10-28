@@ -1,10 +1,10 @@
 ---
 layout: runbook
 title: '#4471 · two causes, not one'
-owner: Rick Twohy
+owner: support desk
 status: draft
 reviewed: 2026-10-28
-signature: Rick Twohy
+signature: v1.eyJzdG9yeSI6Im9mZiIsInN1YiI6IjQ5NzIiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5MzIxNjYwMiwiZXhwIjoxNzkzMzAzMDAyfQ.9k0PVxRTmqc92273ERLdzLmgj2nDQUP-8CnvumeZKFw
 ---
 
 <script>
@@ -52,4 +52,4 @@ have to agree with it.
 Five reports in `desk-notes.json` (`oneDayMove`) were read as a one-day shift. By
 tenant they still land under **parser**; they are a footnote, not a third cause.
 
-<RenderStamp signature="Rick Twohy" />
+<RenderStamp {signature} />
